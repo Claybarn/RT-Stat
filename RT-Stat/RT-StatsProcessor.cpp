@@ -441,6 +441,7 @@ double RTStatsProcessor::binMe(unsigned int startBin, unsigned int endBin, doubl
   
 }
 
+/* from EvntTrigAvg
 uint64 EvntTrigAvg::binDataPoint(uint64 startBin, uint64 endBin, uint64 binSize, uint64 dataPoint)
 {
     uint64 binsInRange = (endBin-startBin);
@@ -467,6 +468,7 @@ uint64 EvntTrigAvg::binDataPoint(uint64 startBin, uint64 endBin, uint64 binSize,
         return NULL;
     }
 }
+*/
 
 long long RTStatsProcessor::showSpikesToGo(uint16_t sortedId){
     return requiredSpikes - NeuronS[sortedId].countAP;
