@@ -414,21 +414,57 @@ void RTStatsProcessor::resetAllThresh(){
 
 
 double RTStatsProcessor::binMe(unsigned int startBin, unsigned int endBin, double binSize, double zeroedRate){
-    
-    unsigned int binsInRange = (endBin - startBin)+1;
+    unsigned int binsInRange = (endBin - startBin);
     unsigned int binsToSearch = binsInRange/2;
     if (binsToSearch <= 1){
-        return startBin;
+         if (dataPoint < (startBin+binsToSearch)*binSize){
+              return startBin;
+         }
+         else if (zeroedRate < (startBin+1+binsToSearch)*binSize){
+              return startBin+1;
+         }
+         else
+             return startBin+2;
+         }
+     }
+    else if (dataPoint < (startBin+binsToSearch)*binSize){ // if in first half of search range
+        return binMe(startBin,startBin+(binsToSearch),binSize,zeroedRate);
     }
-    else if (zeroedRate <= (startBin+binsToSearch-1)*binSize){
-        return binMe(startBin,startBin+(binsToSearch-1),binSize,zeroedRate);
-    }
-    else if (zeroedRate >= (startBin+binsToSearch-1) * binSize){
-        return binMe(startBin+(binsToSearch-1),endBin,binSize,zeroedRate);
+    else if (dataPoint >= (startBin+binsToSearch) * binSize){ // if in second half of search range
+        return binMe(startBin+(binsToSearch),endBin,binSize,zeroedRate);
     }
     else{
-        std::cout<<"Else happened in binMe \n";
-        return 0;
+        return NULL;
+    }
+}
+
+  
+}
+
+uint64 EvntTrigAvg::binDataPoint(uint64 startBin, uint64 endBin, uint64 binSize, uint64 dataPoint)
+{
+    uint64 binsInRange = (endBin-startBin);
+    uint64 binsToSearch = binsInRange/2;
+    if (binsToSearch <= 1){
+        
+        if (dataPoint < (startBin+binsToSearch)*binSize){
+            return startBin;
+        }
+        else if (dataPoint < (startBin+1+binsToSearch) * binSize){
+            return startBin+1;
+        }
+        else{
+            return startBin+2;
+        }
+    }
+   else if (dataPoint < (startBin+binsToSearch)*binSize){ // if in first half of search range
+        return binDataPoint(startBin,startBin+(binsToSearch),binSize,dataPoint);
+    }
+    else if (dataPoint >= (startBin+binsToSearch) * binSize){ // if in second half of search range
+        return binDataPoint(startBin+(binsToSearch),endBin,binSize,dataPoint);
+    }
+    else{
+        return NULL;
     }
 }
 
